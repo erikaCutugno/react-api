@@ -28,30 +28,34 @@ export default function App() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    setPosts((currentState) => [...currentState, formData]);
+    // Aggiungo l'id ai nuovi posts
+    const newformData = {
+      id: posts[posts.length - 1].id + 1,
+      ...formData,
+    };
+    setPosts((currentState) => [...currentState, newformData]);
 
     setFormData(initialFormData);
   };
 
   const articleDelete = (indexToDelete) => {
     setPosts((currentState) =>
-      currentState.filter((post, index) => index !== indexToDelete)
+      currentState.filter((post) => post.id !== indexToDelete)
     );
   };
   return (
     <>
       <h1>Lista Articoli</h1>
       <ul>
-        {posts.map((post, index) => (
-          <li key={index}>
+        {posts.map((post) => (
+          <li key={post.id}>
             <h3>{post.title}</h3>
             <img src={post.image} alt={post.title} />
             <p>{post.content}</p>
             <div>
               {post.tags}
 
-              <button onClick={() => articleDelete(index)}>&#9746;</button>
+              <button onClick={() => articleDelete(post.id)}>&#9746;</button>
               {post.available ? (
                 <h5>(Disponibile)</h5>
               ) : (
