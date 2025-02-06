@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Posts from "./Components/Posts";
 
 const initialFormData = {
   title: "",
@@ -18,24 +19,8 @@ export default function App() {
     });
   };
 
-  useEffect(fetchPosts, []);
-
   const handleFormData = (fieldName, value) => {
     setFormData((currentState) => ({ ...currentState, [fieldName]: value }));
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    axios.post("http://localhost:3001/posts", formData).then((res) => {
-      setPosts((currentState) => [...currentState, res.data]);
-      setFormData(initialFormData);
-    });
-    // Aggiungo l'id ai nuovi posts
-    // const newformData = {
-    //   id: posts[posts.length - 1].id + 1,
-    //   ...formData,
-    // };
-    // setPosts((currentState) => [...currentState, newformData]);
   };
 
   const articleDelete = (postId) => {
@@ -45,30 +30,28 @@ export default function App() {
       );
     });
   };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    axios.post("http://localhost:3001/posts", formData).then((res) => {
+      setPosts((currentState) => [...currentState, res.data]);
+      setFormData(initialFormData);
+    });
+  };
+
+  useEffect(fetchPosts, []);
+
   return (
     <>
       <div className="container">
         <h1>Lista Articoli</h1>
         <ul>
           {posts.map((post) => (
-            <li key={post.id}>
-              <h3>{post.title}</h3>
-              <div className="row">
-                <img src={post.image} alt={post.title} />
-                <div className="column">
-                  <p>{post.content}</p>
-                  {post.tags}
-                  <button onClick={() => articleDelete(post.id)}>
-                    &#9746;
-                  </button>
-                  {post.available ? (
-                    <h5>(Disponibile)</h5>
-                  ) : (
-                    <h5>(Non Disponibile)</h5>
-                  )}
-                </div>
-              </div>
-            </li>
+            <Posts
+              key={post.id}
+              post={post}
+              onClick={() => articleDelete(post.id)}
+            />
           ))}
         </ul>
         <h3>Aggiungi articoli</h3>
