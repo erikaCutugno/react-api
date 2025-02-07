@@ -6,7 +6,7 @@ const initialFormData = {
   title: "",
   image: "",
   content: "",
-  tags: "",
+  tags: [],
   available: false,
 };
 export default function App() {
@@ -20,7 +20,19 @@ export default function App() {
   };
 
   const handleFormData = (fieldName, value) => {
-    setFormData((currentState) => ({ ...currentState, [fieldName]: value }));
+    setFormData((currentState) => {
+      const newState = { ...currentState };
+      if (fieldName === "tags") {
+        if (newState.tags.includes(value)) {
+          newState.tags = newState.tags.filter((tag) => tag !== value);
+        } else {
+          newState.tags = [...newState.tags, value];
+        }
+      } else {
+        newState[fieldName] = value;
+      }
+      return newState;
+    });
   };
 
   const articleDelete = (postId) => {
@@ -98,9 +110,11 @@ export default function App() {
           </div>
           <div>
             <label htmlFor="tags">Scegli la categoria:</label>
+
             <select
               name="tags"
               id="tags"
+              multiple={true}
               value={formData.tags}
               onChange={(e) => {
                 handleFormData("tags", e.target.value);
